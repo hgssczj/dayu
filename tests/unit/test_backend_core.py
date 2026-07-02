@@ -117,7 +117,7 @@ def test_has_significant_changes_ignores_non_deployment_fields():
                             "serviceAccountName": "worker-admin",
                             "containers": [
                                 {
-                                    "image": "repo:5000/dayuhub/face-detection:v1.3",
+                                    "image": "repo:5000/dayuhub/face-detection:v1.4",
                                     "ports": [{"containerPort": 9000}],
                                     "env": [{"name": "PROCESSOR_NAME", "value": "detector"}],
                                 }
@@ -137,7 +137,7 @@ def test_has_significant_changes_ignores_non_deployment_fields():
     assert backend_core_module.BackendCore.has_significant_changes(old_doc, new_doc) is False
 
     new_doc["spec"]["edgeWorker"][0]["template"]["spec"]["containers"][0]["image"] = (
-        "repo:5000/dayuhub/face-detection:v1.4"
+        "repo:5000/dayuhub/face-detection:v1.5"
     )
     assert backend_core_module.BackendCore.has_significant_changes(old_doc, new_doc) is True
 
