@@ -14,11 +14,12 @@
 
 ![](static/dayu-logo-horizontal.svg)
 
-| <img src="static/news.svg" width="8%">  NEWS                           |
-|------------------------------------------------------------------------|
-| (**最新版本**) 2026.1.15. 大禹 v1.2 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v12) |
-| 2025.5.7. 大禹 v1.1 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v11)             |
-| 2025.2.21. 大禹 v1.0 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v10)            |
+| <img src="static/news.svg" width="8%">  NEWS                            |
+|-------------------------------------------------------------------------|
+| (**最新版本**) 2026.07.02. 大禹 v1.3 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v13) |
+| 2026.01.15. 大禹 v1.2 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v12)            |
+| 2025.05.07. 大禹 v1.1 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v11)            |
+| 2025.02.21. 大禹 v1.0 发布，详细信息请查阅 [CHANGELOG](CHANGELOG.md#v10)            |
 
 大禹是一个面向云边协同流式分析的可扩展平台，用于部署、调度和运行基于 DAG 的 AI 服务流水线。它将后端控制面、Vue 前端、模拟数据源、以及
 generator / scheduler / controller / processor / distributor / monitor 这组运行时协同组件组合在一起，并通过 hook
