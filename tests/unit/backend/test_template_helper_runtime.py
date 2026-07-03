@@ -152,7 +152,7 @@ def test_template_helper_finetunes_controller_and_monitor_nodes_and_jetpack_env(
     second_env = {item["name"]: item["value"] for item in edge_workers[1]["template"]["spec"]["containers"][0]["env"]}
 
     assert edge_workers[0]["template"]["spec"]["containers"][0]["image"].endswith("-jp5")
-    assert edge_workers[1]["template"]["spec"]["containers"][0]["image"].endswith(":v1.3")
+    assert edge_workers[1]["template"]["spec"]["containers"][0]["image"].endswith(":v1.4")
     assert first_env["JETPACK"] == "5"
     assert second_env["JETPACK"] == "-1"
     assert monitor_manifest["spec"]["cloudWorker"]["template"]["spec"]["nodeName"] == "cloudx1"

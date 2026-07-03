@@ -2,7 +2,7 @@ English | [简体中文](./README_zh.md)
 
 # Dayu
 
-[![Version](https://img.shields.io/github/release/dayu-autostreamer/dayu)](https://github.com/dayu-autostreamer/dayu/releases)
+[![Version](https://img.shields.io/github/v/release/dayu-autostreamer/dayu?cacheSeconds=3600)](https://github.com/dayu-autostreamer/dayu/releases)
 [![CI](https://github.com/dayu-autostreamer/dayu/actions/workflows/ci.yml/badge.svg)](https://github.com/dayu-autostreamer/dayu/actions/workflows/ci.yml)
 [![CircleCI Project](https://circleci.com/gh/dayu-autostreamer/dayu.svg?style=svg)](https://app.circleci.com/pipelines/gh/dayu-autostreamer/dayu)
 [![Codecov](https://codecov.io/gh/dayu-autostreamer/dayu/graph/badge.svg)](https://codecov.io/gh/dayu-autostreamer/dayu)
