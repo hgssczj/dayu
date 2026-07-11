@@ -2,14 +2,6 @@
 
 ---
 
-## v1.4 (In Development)
-
-### Features
-
-### Bug Fix
-
-### Minor Update
-
 ## v1.3
 
 ### Features

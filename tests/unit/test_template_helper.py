@@ -12,8 +12,8 @@ def test_process_image_fills_missing_registry_repository_and_tag(mounted_runtime
     template_helper_module = importlib.import_module("template_helper")
     helper = template_helper_module.TemplateHelper(str(mounted_runtime))
 
-    assert helper.process_image("generator") == "repo:5000/dayuhub/generator:v1.4"
-    assert helper.process_image("custom/generator") == "repo:5000/custom/generator:v1.4"
+    assert helper.process_image("generator") == "repo:5000/dayuhub/generator:v1.3"
+    assert helper.process_image("custom/generator") == "repo:5000/custom/generator:v1.3"
     assert helper.process_image("ghcr.io/dayu/generator:latest") == "ghcr.io/dayu/generator:latest"
 
 
@@ -38,7 +38,7 @@ def test_fill_template_builds_both_side_controller_manifest(mounted_runtime, mon
 
     cloud_container = manifest["spec"]["cloudWorker"]["template"]["spec"]["containers"][0]
     cloud_env = {item["name"]: item["value"] for item in cloud_container["env"]}
-    assert cloud_container["image"] == "repo:5000/dayuhub/controller:v1.4"
+    assert cloud_container["image"] == "repo:5000/dayuhub/controller:v1.3"
     assert cloud_container["ports"] == [{"containerPort": 9000}]
     assert cloud_env["NAMESPACE"] == "dayu"
     assert cloud_env["KUBERNETES_SERVICE_HOST"] == "10.0.0.1"
