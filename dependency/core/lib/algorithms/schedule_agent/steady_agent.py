@@ -46,26 +46,32 @@ class SteadyAgent(BaseAgent, abc.ABC):
         # resolution ['240p', '360p', '480p', '540p', '720p', '900p', '1080p']
         self.edge_serv_num_list = None
 
-        self.record_path = Context.get_file_path(sch_param['record_path']) + '-' + str(agent_id) + '-online'
-        from datetime import datetime
-        current_time = datetime.now()
-        time_string = current_time.strftime("%Y-%m-%d-%H-%M-%S")
-        self.record_path = self.record_path + '-' + time_string + '.json'
+        self.schedule_plan_num = 0
 
+        
+
+        # 
         self.if_stop_record_in_single_cycle = sch_param['if_stop_record_in_single_cycle']
         self.stop_max_frame_num = sch_param['stop_max_frame_num']
         self.processed_frame_num = 0
         self.if_keep_record = True
 
-        self.schedule_plan_num = 0
+        from datetime import datetime
+        current_time = datetime.now()
+        time_string = current_time.strftime("%Y-%m-%d-%H-%M-%S")
+
+        self.record_path_suffix = Context.get_file_path(sch_param['record_path']) + '-' + str(
+            agent_id) + '-online' + '-' + time_string + '.json'
+        self.steady_record_path_suffix = Context.get_file_path(steady_param['steady_']) + '-' + str(
+            agent_id) + '-online' + '-' + time_string + '.json'
+        self.correct_record_path_suffix = Context.get_file_path(steady_param['correct_record_path']) + '-' + str(
+            agent_id) + '-online' + '-' + time_string + '.json'
+
+        self.record_path = None
 
         self.init_param = steady_param
         self.init_param['context_names'] = ['band_Mbps', 'obj_num', 'obj_size_norm', 'obj_speed']
         self.init_param['kb_path'] = Context.get_file_path(steady_param['kb_path'])
-        self.init_param['steady_record_path'] = Context.get_file_path(steady_param['steady_record_path']) + '-' + str(
-            agent_id) + '-online' + '-' + time_string + '.json'
-        self.init_param['correct_record_path'] = Context.get_file_path(steady_param['correct_record_path']) + '-' + str(
-            agent_id) + '-online' + '-' + time_string + '.json'
 
         self.overall_scheduler = None
 
@@ -108,6 +114,10 @@ class SteadyAgent(BaseAgent, abc.ABC):
                 task=task,
                 resource_table=self.cur_resource_table
             )
+
+            if self.record_path is None:
+                self.record_path = 'source_id' + '-' + str(task.get_source_id()) + '-' + task.get_source_device() + '-' + self.record_path_suffix
+
             ContextRecord.write_record(context_record=context_record,
                                        file_path=self.record_path)
             LOGGER.debug('[SteadyAgent] Wrote task record.')
@@ -163,6 +173,10 @@ class SteadyAgent(BaseAgent, abc.ABC):
             adjusted_delay_cons = self.init_param['delay_cons'] * self.init_param['delay_cons_adjust']
             adjusted_acc_cons = self.init_param['acc_cons'] * self.init_param['acc_cons_adjust']
 
+            steady_record_path = 'source_id' + '-' + str(info['source_id']) + '-' + info['source_device'] + '-' + self.steady_record_path_suffix
+            correct_record_path = 'source_id' + '-' + str(info['source_id']) + '-' + info['source_device'] + '-' + self.correct_record_path_suffix
+
+
             self.overall_scheduler = OverallScheduler(
                 kb_path=self.init_param['kb_path'],
                 service_name_pipeline=self.service_names,
@@ -186,8 +200,8 @@ class SteadyAgent(BaseAgent, abc.ABC):
                 macro_update_interval=self.init_param['macro_update_interval'],
                 context_anylze_type=self.init_param['context_anylze_type'],
                 coeff_info=self.init_param['coeff_info'],
-                steady_record_path=self.init_param['steady_record_path'],
-                correct_record_path=self.init_param['correct_record_path'],
+                steady_record_path=steady_record_path,
+                correct_record_path=correct_record_path,
                 cluster_threshold=self.init_param['cluster_threshold'],
             )
 
