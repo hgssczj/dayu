@@ -330,6 +330,9 @@ class MicroFeedback:
         '''
         # 参数为字典的时候一定要用拷贝
         new_policy = copy.deepcopy(old_policy)
+
+        print('当前旧策略是',old_policy)
+        print('当前各knob的取值范围是',self.knob_value_range_dict)
         
         for knob in list(self.knob_value_range_dict.keys()):
 
@@ -338,7 +341,11 @@ class MicroFeedback:
 
             knob_value_range = list(self.knob_value_range_dict[knob])
 
+        
             old_knob_value = old_policy[knob]
+            print('当前',knob,'的取值范围是',knob_value_range)
+            print('其旧值是',old_knob_value)
+
             old_knob_idx = knob_value_range.index(old_knob_value)
 
             step_coeff = self.coeff_info['step_coeff']['cur_value'] 

@@ -60,12 +60,11 @@ class SteadyAgent(BaseAgent, abc.ABC):
         current_time = datetime.now()
         time_string = current_time.strftime("%Y-%m-%d-%H-%M-%S")
 
-        self.record_path_suffix = Context.get_file_path(sch_param['record_path']) + '-' + str(
-            agent_id) + '-online' + '-' + time_string + '.json'
-        self.steady_record_path_suffix = Context.get_file_path(steady_param['steady_']) + '-' + str(
-            agent_id) + '-online' + '-' + time_string + '.json'
-        self.correct_record_path_suffix = Context.get_file_path(steady_param['correct_record_path']) + '-' + str(
-            agent_id) + '-online' + '-' + time_string + '.json'
+        self.record_path_prefix = Context.get_file_path(sch_param['record_path'])
+        self.steady_record_path_prefix = Context.get_file_path(steady_param['steady_record_path'])
+        self.correct_record_path_prefix = Context.get_file_path(steady_param['correct_record_path'])
+
+        self.path_suffix =  str(agent_id) + '-online' + '-' + time_string + '.json'
 
         self.record_path = None
 
@@ -116,7 +115,7 @@ class SteadyAgent(BaseAgent, abc.ABC):
             )
 
             if self.record_path is None:
-                self.record_path = 'source_id' + '-' + str(task.get_source_id()) + '-' + task.get_source_device() + '-' + self.record_path_suffix
+                self.record_path = self.record_path_prefix + '-' + 'source_id' + '-' + str(task.get_source_id()) + '-' + task.get_source_device() + '-' + self.path_suffix
 
             ContextRecord.write_record(context_record=context_record,
                                        file_path=self.record_path)
@@ -173,8 +172,8 @@ class SteadyAgent(BaseAgent, abc.ABC):
             adjusted_delay_cons = self.init_param['delay_cons'] * self.init_param['delay_cons_adjust']
             adjusted_acc_cons = self.init_param['acc_cons'] * self.init_param['acc_cons_adjust']
 
-            steady_record_path = 'source_id' + '-' + str(info['source_id']) + '-' + info['source_device'] + '-' + self.steady_record_path_suffix
-            correct_record_path = 'source_id' + '-' + str(info['source_id']) + '-' + info['source_device'] + '-' + self.correct_record_path_suffix
+            steady_record_path = self.steady_record_path_prefix + '-' + 'source_id' + '-' + str(info['source_id']) + '-' + info['source_device'] + '-' + self.path_suffix
+            correct_record_path = self.correct_record_path_prefix + '-' + 'source_id' + '-' + str(info['source_id']) + '-' + info['source_device'] + '-' + self.path_suffix
 
 
             self.overall_scheduler = OverallScheduler(

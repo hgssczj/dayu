@@ -1,0 +1,38 @@
+source_name: "Road & Street Cameras (Four Camera HTTP)"
+source_type: "video"
+source_mode: "http_video"
+source_list:
+  - name: "road_car_dense_4"
+    url: ""
+    dir: "road_dense/"
+    metadata:
+      resolution: "540p"
+      fps: 30
+      encoding: "mp4v"
+      buffer_size: 4
+  - name: "road_car_sparse_5"
+    url: ""
+    dir: "road_sparse/"
+    metadata:
+      resolution: "540p"
+      fps: 30
+      encoding: "mp4v"
+      buffer_size: 4
+  - name: "street_face_dense_7"
+    url: ""
+    dir: "street_dense/"
+    metadata:
+      resolution: "1080p"
+      fps: 30
+      encoding: "mp4v"
+      buffer_size: 4
+  - name: "street_face_sparse_8"
+    url: ""
+    dir: "street_sparse/"
+    metadata:
+      resolution: "1080p"
+      fps: 30
+      encoding: "mp4v"
+      buffer_size: 4
+
+
