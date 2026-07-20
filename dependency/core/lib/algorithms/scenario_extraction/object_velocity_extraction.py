@@ -3,7 +3,7 @@ import abc
 from .base_extraction import BaseExtraction
 from core.lib.common import ClassFactory, ClassType
 
-from core.lib.common import LOGGER
+from core.lib.common import LOGGER, FileOps
 import os
 import cv2
 import numpy as np
@@ -34,15 +34,19 @@ class ObjectVelocityExtraction(BaseExtraction, abc.ABC):
     def __call__(self, result, task):
 
         # LOGGER.info(f'ready for get obj_speed, test if TrackerCSRT_create exists')
-
-        data_file_path = task.get_file_path()
+        data_file_path = FileOps.get_task_file_in_temp(task)
+        print("视频路径：", data_file_path)
         cap = cv2.VideoCapture(data_file_path)
+        print("cap打开状态：", cap.isOpened())
+        print("总帧数：", cap.get(cv2.CAP_PROP_FRAME_COUNT))
         image_list = []
         success, frame = cap.read()
+        print("首次read success：", success)
         while success:
             self.frame_size = (cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
             image_list.append(frame)
             success, frame = cap.read()
+        print("最终image_list长度：", len(image_list))
 
         if len(image_list) < 2:
             LOGGER.critical('ERROR: image list length is less than 2')

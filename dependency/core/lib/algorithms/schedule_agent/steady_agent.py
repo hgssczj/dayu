@@ -41,7 +41,7 @@ class SteadyAgent(BaseAgent, abc.ABC):
 
         self.fps_list = system.fps_list
         self.resolution_list = system.resolution_list
-        self.buffer_size_list = [x for x in system.buffer_size_list if x > 2]
+        self.buffer_size_list = [x for x in system.buffer_size_list if x >= 2]
         # fps [1, 2, 3, 4, 5, 10, 15, 20, 25, 30]
         # resolution ['240p', '360p', '480p', '540p', '720p', '900p', '1080p']
         self.edge_serv_num_list = None
