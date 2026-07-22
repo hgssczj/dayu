@@ -1,0 +1,125 @@
+position: cloud
+pod-template:
+  image: repo:5000/dayuhub/scheduler:test-csy-01
+  imagePullPolicy: Always
+  env:
+    - name: SCH_CONFIG_EXTRACTION_NAME
+      value: simple
+    - name: SCH_SCENARIO_RETRIEVAL_NAME
+      value: steady
+    - name: SCH_STARTUP_POLICY_NAME
+      value: fixed
+    - name: SCH_POLICY_RETRIEVAL_NAME
+      value: simple
+    - name: SCH_SELECTION_POLICY_NAME
+      value: fixed
+    - name: SCH_INITIAL_DEPLOYMENT_POLICY_NAME
+      value: full
+    - name: SCH_REDEPLOYMENT_POLICY_NAME
+      value: non
+    - name: SCH_AGENT_NAME
+      value: rigid
+    - name: SCH_AGENT_PARAMETERS
+      value: >
+        {
+          'sch_param':{
+              'record_path':'RigidAgent-test',
+              'if_stop_record_in_single_cycle':1,
+              'stop_max_frame_num':500,
+          },
+          'rigid_param':{
+              'if_pure_fc':0,
+              'kb_path':'test_kb/kb2',
+              'delay_cons':0.3,
+              'delay_cons_adjust':0.7,
+              'default_policy':{
+                  'fps':30,
+                  'resolution':'360p',
+                  'buffer_size':4,
+                  'edge_serv_num':0
+              },
+              'history_lenghth':3,
+              'stop_threshold':0.1,
+              'macro_update_interval':0.01,
+              'context_anylze_type':1,
+              'coeff_info':{
+                              'step_coeff':{
+                                  'start_value':10,
+                                  'add_interval':5,
+                                  'min_value':10,
+                                  'max_value':1000,
+                                  'cur_value':10
+                              },
+                              'opt_coeff':{
+                                  'start_value':0.1,
+                                  'add_interval':0.1,
+                                  'min_value':0,
+                                  'max_value':1.0,
+                                  'cur_value':0.1
+                              }
+                          },
+
+              'corrector_param' : {
+                      'corrector_pool_threshold':0.01,
+                      'detect':{
+                          'n':2,
+                          'coeff_window_length':10,
+                          'x_sample_window_length':10,
+                          'y_sample_window_length':10
+                      },
+                      'classify':{
+                          'n':2,
+                          'coeff_window_length':10,
+                          'x_sample_window_length':10,
+                          'y_sample_window_length':10
+                      },
+                      'trans':{
+                          'n':1,
+                          'coeff_window_length':10,
+                          'x_sample_window_length':10,
+                          'y_sample_window_length':10
+                      }
+                  },
+
+              'queue_param':{
+                  'detect_edge':{
+                      'max_diff_thr':50,
+                      'min_diff_thr':10,
+                      'min_anylze_thr':10,
+                      'stable_thr':0.01,
+                      'fit_thr':0.9,
+                      'history_window_length':100
+                  },
+                  'detect_cloud':{
+                      'max_diff_thr':50,
+                      'min_diff_thr':10,
+                      'min_anylze_thr':10,
+                      'stable_thr':0.01,
+                      'fit_thr':0.9,
+                      'history_window_length':100
+                  },
+                  'classify_edge':{
+                      'max_diff_thr':50,
+                      'min_diff_thr':10,
+                      'min_anylze_thr':10,
+                      'stable_thr':0.01,
+                      'fit_thr':0.9,
+                      'history_window_length':100
+                  },
+                  'classify_cloud':{
+                      'max_diff_thr':50,
+                      'min_diff_thr':10,
+                      'min_anylze_thr':10,
+                      'stable_thr':0.01,
+                      'fit_thr':0.9,
+                      'history_window_length':100
+                  }
+              }
+          }
+        }
+port-open:
+  pos: cloud
+  port: 9000
+file-mount:
+  - pos: cloud
+    path: 'scheduler/rigid/'
