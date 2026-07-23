@@ -3,20 +3,21 @@ import abc
 from core.lib.common import ClassFactory, ClassType, Context, TaskConstant, LOGGER
 from core.lib.content import Task
 
-from .rigid import ContextRecord, OverallScheduler
+from .grope import ContextRecord, GropeScheduler
 
 import copy
 
-
 from .base_agent import BaseAgent
 
-__all__ = ('RigidAgent',)
+__all__ = ('GropeAgent',)
 
 
-@ClassFactory.register(ClassType.SCH_AGENT, alias='rigid')
-class RigidAgent(BaseAgent, abc.ABC):
+@ClassFactory.register(ClassType.SCH_AGENT, alias='grope')
+class GropeAgent(BaseAgent, abc.ABC):
 
-    def __init__(self, system, agent_id: int, sch_param: dict, rigid_param: dict):
+
+
+    def __init__(self, system, agent_id: int, sch_param: dict, grope_param: dict):
 
         super().__init__(system, agent_id)
         self.cur_resource_table = {}
@@ -49,12 +50,15 @@ class RigidAgent(BaseAgent, abc.ABC):
 
         self.record_path = None
 
-        self.init_param = rigid_param
+        self.init_param = grope_param
         self.init_param['context_names'] = ['band_Mbps', 'obj_num', 'obj_size_norm', 'obj_speed']
-        self.init_param['kb_path'] = Context.get_file_path(rigid_param['kb_path'])
+        self.init_param['kb_path'] = Context.get_file_path(grope_param['kb_path'])
 
-        self.overall_scheduler = None
+        self.grope_scheduler = None
 
+        self.grope_type = grope_param['grope_type']
+    
+    
     def run(self):
         pass
 
@@ -66,7 +70,7 @@ class RigidAgent(BaseAgent, abc.ABC):
 
     def update_policy(self, policy):
         self.cur_policy = policy
-    
+
     def update_task(self, task: Task):
         if task == None:
             LOGGER.debug('New task is None.')
@@ -118,14 +122,8 @@ class RigidAgent(BaseAgent, abc.ABC):
     
     def update_aware(self, cur_task: Task):
 
-        task = copy.deepcopy(cur_task)
-        if self.overall_scheduler is not None:
-            context_info = self.get_context_info_from_task(cur_task=task)
-            conf_info, task_info = self.get_conf_info_task_info_from_task(cur_task=task)
-            self.overall_scheduler.update_scheduler(context_info=context_info,
-                                                    conf_info=conf_info,
-                                                    task_info=task_info)
-    
+        pass
+
     def get_schedule_plan(self, info):
 
         new_schedule_plan = None
@@ -141,16 +139,17 @@ class RigidAgent(BaseAgent, abc.ABC):
                     self.service_names.append(service_info['service_name'])
             self.edge_serv_num_list = [i for i in range(0, len(self.service_names) + 1)]
 
-        if self.overall_scheduler is None:
+    
+        if self.grope_scheduler is None:
+
             raw_meta_data = info['meta_data']
 
             adjusted_delay_cons = self.init_param['delay_cons'] * self.init_param['delay_cons_adjust']
+            adjusted_acc_cons = self.init_param['acc_cons'] * self.init_param['acc_cons_adjust']
 
-            self.overall_scheduler = OverallScheduler(
+            self.grope_scheduler = GropeScheduler(
                 kb_path=self.init_param['kb_path'],
                 service_name_pipeline=self.service_names,
-                corrector_param=self.init_param['corrector_param'],
-                queue_param=self.init_param['queue_param'],
                 knob_value_range_dict={
                     'fps': self.fps_list,
                     'resolution': self.resolution_list,
@@ -158,36 +157,33 @@ class RigidAgent(BaseAgent, abc.ABC):
                     'edge_serv_num': self.edge_serv_num_list
                 },
                 delay_cons=adjusted_delay_cons,
+                acc_cons=adjusted_acc_cons,
+                delay_weight=self.init_param['delay_weight'],
+                acc_weight=self.init_param['acc_weight'],
                 default_policy=self.init_param['default_policy'],
                 raw_meta_data=raw_meta_data,
-                context_names=self.init_param['context_names'],
-                history_lenghth=self.init_param['history_lenghth'],
-                stop_threshold=self.init_param['stop_threshold'],
-                macro_update_interval=self.init_param['macro_update_interval'],
-                context_anylze_type=self.init_param['context_anylze_type'],
-                coeff_info=self.init_param['coeff_info'],
-                if_pure_fc=self.init_param['if_pure_fc']
+                grope_type_param = self.init_param['grope_type_param'],
+                goal_type = self.init_param['goal_type'],
+                corrector_param=self.init_param['corrector_param'],
+                queue_param=self.init_param['queue_param'],
             )
 
-      
         task = copy.deepcopy(self.cur_task)
         task_id = None
         cur_policy = None
         context_info = None
-        real_time_delay = None
 
         if task is not None:
             task_id = task.get_task_id()
             cur_policy = self.get_conf_info_from_task(cur_task=task)
             context_info = self.get_context_info_from_task(cur_task=task)
-            real_time_delay = self.get_delay_from_task(cur_task=task)
 
-        # cur_task_id, cur_policy, context_info, real_time_delay
-        new_policy = self.overall_scheduler.get_schedule_plan(cur_task_id=task_id,
-                                                                cur_policy=cur_policy,
-                                                                context_info=context_info,
-                                                                real_time_delay=real_time_delay)
-
+        # cur_task_id, cur_policy, context_info, grope_type
+        new_policy = self.grope_scheduler.get_schedule_plan(cur_task_id=task_id,
+                                                            cur_policy = cur_policy,
+                                                            context_info = context_info,
+                                                            grope_type = self.grope_type
+                                                            )
         old_pipeline_dict = Task.extract_pipeline_deployment_from_dag_deployment(info['dag'])
         new_pipeline_dict = self.trans_edge_serv_num_to_pipeline_dict(edge_serv_num=new_policy['edge_serv_num'],
                                                                         pipeline_dict=old_pipeline_dict,
@@ -205,9 +201,12 @@ class RigidAgent(BaseAgent, abc.ABC):
 
         return new_schedule_plan
 
-        
-          
 
+
+
+
+
+   
     def get_delay_from_task(self, cur_task: Task):
 
         task = copy.deepcopy(cur_task)
