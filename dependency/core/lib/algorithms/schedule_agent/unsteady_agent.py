@@ -90,23 +90,23 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
 
     def update_task(self, task: Task):
         if task == None:
-            LOGGER.debug('[UnsteadyAgent] New task is None.')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] New task is None.')
             return
         else:
-            LOGGER.debug(f'[UnsteadyAgent] New task id: {task.get_task_id()}')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] New task id: {task.get_task_id()}')
 
         cur_task = copy.deepcopy(task)
 
         self.cur_task = cur_task
         self.update_record(cur_task=cur_task)
-        LOGGER.debug('[UnsteadyAgent] Finished updating the task record.')
+        LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Finished updating the task record.')
         self.update_aware(cur_task=cur_task)
-        LOGGER.debug('[UnsteadyAgent] Finished updating scheduler awareness.')
+        LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Finished updating scheduler awareness.')
 
     def update_record(self, cur_task: Task):
         task = copy.deepcopy(cur_task)
         if self.if_keep_record:
-            LOGGER.debug('[UnsteadyAgent] Task recording is enabled.')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Task recording is enabled.')
             context_record = ContextRecord(
                 task=task,
                 resource_table=self.cur_resource_table
@@ -117,23 +117,23 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
 
             ContextRecord.write_record(context_record=context_record,
                                        file_path=self.record_path)
-            LOGGER.debug('[UnsteadyAgent] Wrote task record.')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Wrote task record.')
         else:
-            LOGGER.debug('[UnsteadyAgent] Task recording is disabled.')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Task recording is disabled.')
 
         if self.if_stop_record_in_single_cycle == 1:
-            LOGGER.debug('[UnsteadyAgent] Single-cycle recording stop is enabled.')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Single-cycle recording stop is enabled.')
             self.processed_frame_num += self.get_logic_frame_num_from_task(cur_task=task)
             LOGGER.debug(
-                f'[UnteadyAgent] Processed logic frames: {self.processed_frame_num}; '
+                f'{self.edge_device} [UnteadyAgent] Processed logic frames: {self.processed_frame_num}; '
                 f'limit: {self.stop_max_frame_num}'
             )
 
             if self.processed_frame_num > self.stop_max_frame_num:
-                LOGGER.debug('[UnsteadyAgent] Logic frame limit reached; stop recording.')
+                LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Logic frame limit reached; stop recording.')
                 self.if_keep_record = False
         else:
-            LOGGER.debug('[UnsteadyAgent] Single-cycle recording stop is disabled.')
+            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Single-cycle recording stop is disabled.')
 
     def update_aware(self, cur_task: Task):
 
@@ -419,7 +419,7 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
         task_info['task_id'] = task.get_task_id()
         task_info['real_trans'] = edge_cloud_trans_delay
 
-        LOGGER.debug(f'[UnsteadyAgent] task_info: {task_info}')
+        LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] task_info: {task_info}')
 
         return task_info
 

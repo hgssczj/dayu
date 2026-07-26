@@ -29,7 +29,7 @@ pod-template:
           },
           'grope_param':{
               'grope_type':'MadEye',
-              'goal_type':'prefer'
+              'goal_type':'rigid',
               'kb_path':'test_kb/kb2',
               'delay_cons':0.3,
               'acc_cons':0.6,

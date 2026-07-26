@@ -28,7 +28,7 @@ pod-template:
               'stop_max_frame_num':500,
           },
           'rigid_param':{
-              'if_pure_fc':0,
+              'if_pure_fc':1,
               'kb_path':'test_kb/kb2',
               'delay_cons':0.3,
               'delay_cons_adjust':0.7,
