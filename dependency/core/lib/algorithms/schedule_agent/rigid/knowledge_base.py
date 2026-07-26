@@ -236,7 +236,7 @@ class KnowledgeBase():
                 left_knob_list.remove(best_knob)
             
             else:
-                assert('wrong dir in choose_knobs_by_search')
+                assert 0, 'wrong dir in choose_knobs_by_search'
         return path_record
 
 
@@ -273,7 +273,7 @@ class KnowledgeBase():
     def get_best_policy_score_in_one_dir(self, cur_policy, cur_score, cur_context, knob, dir):
 
         if dir not in [1,-1]:
-            assert('Wrong dir in change_knob_in_one_dir')
+            assert 0, 'Wrong dir in change_knob_in_one_dir'
 
         best_policy = copy.deepcopy(cur_policy)
         best_score = cur_score

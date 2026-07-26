@@ -273,7 +273,7 @@ class KnowledgeBase():
                 left_knob_list.remove(best_knob)
             
             else:
-                assert('wrong dir in choose_knobs_by_search')
+                assert 0, 'wrong dir in choose_knobs_by_search'
         return path_record
     
 
@@ -361,7 +361,7 @@ class KnowledgeBase():
                 path_policy = tmp_policy
                 path_loss = tmp_loss
             else:
-                assert('wrong dir in choose_knobs_by_search')
+                assert 0, 'wrong dir in choose_knobs_by_search'
 
         return path_record
 
@@ -408,7 +408,7 @@ class KnowledgeBase():
     # 在搜索过程中，基于一个配置旋钮以及方向，沿着这个方向寻找能够使得loss最小的配置，并返回最终的loss和配置
     def get_best_policy_loss_in_one_dir(self, cur_policy, cur_loss, cur_context, knob, dir):
         if dir not in [1,-1]:
-            assert('Wrong dir in change_knob_in_one_dir')
+            assert 0, 'Wrong dir in change_knob_in_one_dir'
         best_policy = copy.deepcopy(cur_policy)
         best_loss = cur_loss
         dir_num = 0
