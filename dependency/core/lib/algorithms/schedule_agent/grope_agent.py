@@ -220,7 +220,7 @@ class GropeAgent(BaseAgent, abc.ABC):
             adjusted_delay_cons = 1
             adjusted_acc_cons = 0
             delay_weight = 1
-            delay_cons = 0
+            acc_weight = 0
 
             if self.goal_type == 'prefer':
                 adjusted_delay_cons = cur_cons_info_comb['delay_cons_info']['value'] * cur_cons_info_comb['delay_cons_info']['adjust']
