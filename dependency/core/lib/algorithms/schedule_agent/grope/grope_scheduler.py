@@ -58,7 +58,18 @@ class GropeScheduler:
         # 需要长期保持的流形
         self.dict_str_set_for_MadEye = DictStrSet()
         
+    def update_delay_cons(self, delay_cons):
+        self.delay_cons = delay_cons
 
+    def update_acc_cons(self, acc_cons):
+        self.acc_cons = acc_cons
+    
+    def update_delay_weight(self, delay_weight):
+        self.delay_weight = delay_weight
+
+    def update_acc_weight(self, acc_weight):
+        self.acc_weight = acc_weight
+    
     def get_schedule_plan(self, cur_task_id, cur_policy, context_info, grope_type ):
 
         # 冷启动

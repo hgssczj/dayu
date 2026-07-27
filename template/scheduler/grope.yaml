@@ -24,19 +24,34 @@ pod-template:
         {
           'sch_param':{
               'record_path':'GropeAgent-test',
-              'if_stop_record_in_single_cycle':1,
-              'stop_max_frame_num':500,
+              'if_stop_record_in_single_cycle':1
           },
           'grope_param':{
               'grope_type':'MadEye',
               'goal_type':'rigid',
               'kb_path':'test_kb/kb2',
-              'delay_cons':0.3,
-              'acc_cons':0.6,
-              'delay_weight':0.8,
-              'acc_weight':0.2,
-              'delay_cons_adjust':0.7,
-              'acc_cons_adjust':1.2,
+              'unit_logic_frame_num_max':400,
+              'all_delay_cons_info':[
+                                  {
+                                    'value':0.3,
+                                    'adjust':0.7
+                                  },
+                                  {
+                                    'value':0.4,
+                                    'adjust':0.7
+                                  }
+                                ],
+              'all_acc_cons_info':[
+                                  {
+                                    'value':0.6,
+                                    'adjust':1.2
+                                  },
+                                  {
+                                    'value':0.7,
+                                    'adjust':1.2
+                                  }
+                                ],
+              'all_delay_weight':[0.5,0.6,0.7,0.8,0.9],
               'default_policy':{
                   'fps':30,
                   'resolution':'360p',
@@ -113,7 +128,7 @@ pod-template:
                       'fit_thr':0.9,
                       'history_window_length':100
                   }
-              },
+              }
           }
         }
 port-open:
