@@ -30,28 +30,49 @@ pod-template:
               'grope_type':'MadEye',
               'goal_type':'rigid',
               'kb_path':'test_kb/kb2',
-              'unit_logic_frame_num_max':400,
+              'unit_logic_frame_num_max':100,
               'all_delay_cons_info':[
                                   {
                                     'value':0.3,
-                                    'adjust':0.7
+                                    'adjust':0.667
                                   },
                                   {
                                     'value':0.4,
-                                    'adjust':0.7
+                                    'adjust':0.5
                                   }
                                 ],
               'all_acc_cons_info':[
                                   {
                                     'value':0.6,
-                                    'adjust':1.2
+                                    'adjust':1.16
                                   },
                                   {
                                     'value':0.7,
-                                    'adjust':1.2
+                                    'adjust':1
                                   }
                                 ],
-              'all_delay_weight':[0.5,0.6,0.7,0.8,0.9],
+              'all_delay_weight_info':[
+                                  {
+                                    'value':0.5,
+                                    'adjust':1.6
+                                  },
+                                  {
+                                    'value':0.6,
+                                    'adjust':1.333
+                                  },
+                                  {
+                                    'value':0.7,
+                                    'adjust':1.142
+                                  },
+                                  {
+                                    'value':0.8,
+                                    'adjust':1
+                                  },
+                                  {
+                                    'value':0.9,
+                                    'adjust':0.889
+                                  }
+                                ],
               'default_policy':{
                   'fps':30,
                   'resolution':'360p',

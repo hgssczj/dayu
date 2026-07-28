@@ -44,16 +44,15 @@ class GropeAgent(BaseAgent, abc.ABC):
         
         self.all_delay_cons_info = grope_param['all_delay_cons_info']
         self.all_acc_cons_info = grope_param['all_acc_cons_info']
-        self.all_delay_weight = grope_param['all_delay_weight']
+        self.all_delay_weight_info = grope_param['all_delay_weight_info']
         self.all_cons_info_comb_list = []
 
         if self.goal_type == 'prefer':
-            for delay_weight in self.all_delay_weight:
+            for delay_weight_info in self.all_delay_weight_info:
                 for delay_cons_info in self.all_delay_cons_info:
                     for acc_cons_info in self.all_acc_cons_info:
                         cons_info_comb = {}
-                        cons_info_comb['delay_weight'] = delay_weight
-                        cons_info_comb['acc_weight'] = 1 - delay_weight
+                        cons_info_comb['delay_weight_info'] = delay_weight_info
                         cons_info_comb['delay_cons_info'] = delay_cons_info
                         cons_info_comb['acc_cons_info'] = acc_cons_info
                         self.all_cons_info_comb_list.append(cons_info_comb)
@@ -124,31 +123,14 @@ class GropeAgent(BaseAgent, abc.ABC):
             cur_cons_info_comb = self.all_cons_info_comb_list[-1]
         else:
             cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
-        '''
-        if self.goal_type == 'prefer':
-            for delay_weight in self.all_delay_weight:
-                for delay_cons_info in self.all_delay_cons_info:
-                    for acc_cons_info in self.all_acc_cons_info:
-                        cons_info_comb = {}
-                        cons_info_comb['delay_weight'] = delay_weight
-                        cons_info_comb['acc_weight'] = 1 - delay_weight
-                        cons_info_comb['delay_cons_info'] = delay_cons_info
-                        cons_info_comb['acc_cons_info'] = acc_cons_info
-                        self.all_cons_info_comb_list.append(cons_info_comb)
-        else:
-            for delay_cons_info in self.all_delay_cons_info:
-                cons_info_comb = {}
-                cons_info_comb['delay_cons_info'] = delay_cons_info
-                self.all_cons_info_comb_list.append(cons_info_comb)
-        '''
 
         if self.if_keep_record:
             cons_table = {}
             if self.goal_type == 'prefer':
                 cons_table['delay_cons'] = cur_cons_info_comb['delay_cons_info']['value']
                 cons_table['acc_cons'] = cur_cons_info_comb['acc_cons_info']['value']
-                cons_table['delay_weight'] = cur_cons_info_comb['delay_weight']
-                cons_table['acc_weight'] = cur_cons_info_comb['acc_weight']
+                cons_table['delay_weight'] = cur_cons_info_comb['delay_weight_info']['value']
+                cons_table['acc_weight'] = 1 - cur_cons_info_comb['delay_weight_info']['value']
             else:
                 cons_table['delay_cons'] = cur_cons_info_comb['delay_cons_info']['value']
             context_record = ContextRecord(
@@ -174,24 +156,27 @@ class GropeAgent(BaseAgent, abc.ABC):
                 self.cons_info_comb_idx += 1
                 self.unit_processed_frame_num = 0
                 LOGGER.debug(f'{self.edge_device} New cons_comb_info_idx: {self.cons_info_comb_idx} of len{len(self.all_cons_info_comb_list)}; ')
-                
                 # 已经处理完毕了所有的情况，后续不用继续记录，也不用更新约束
                 if self.cons_info_comb_idx >= len(self.all_cons_info_comb_list):
                     LOGGER.debug(f'{self.edge_device} All cons_info_comb done.')
                     self.if_keep_record = False
-
                 # 否则更新调度器内部的约束
                 else:
                     # 更新所有约束
                     new_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
                     if self.goal_type == 'prefer':
-                        self.grope_scheduler.update_delay_cons(new_cons_info_comb['delay_cons_info']['value'] * new_cons_info_comb['delay_cons_info']['adjust'])
-                        self.grope_scheduler.update_acc_cons(new_cons_info_comb['acc_cons_info']['value'] * new_cons_info_comb['acc_cons_info']['adjust'])
-                        self.grope_scheduler.update_delay_weight(new_cons_info_comb['delay_weight'])
-                        self.grope_scheduler.update_acc_weight(new_cons_info_comb['acc_weight'])
+                        adjusted_delay_cons = new_cons_info_comb['delay_cons_info']['value'] * new_cons_info_comb['delay_cons_info']['adjust']
+                        adjusted_acc_cons = new_cons_info_comb['acc_cons_info']['value'] * new_cons_info_comb['acc_cons_info']['adjust']
+                        adjusted_delay_weight = new_cons_info_comb['delay_weight_info']['value'] * new_cons_info_comb['delay_weight_info']['adjust']
+                        adjusted_acc_weight = 1 - adjusted_delay_weight
+    
+                        self.grope_scheduler.update_delay_cons(adjusted_delay_cons)
+                        self.grope_scheduler.update_acc_cons(adjusted_acc_cons)
+                        self.grope_scheduler.update_delay_weight(adjusted_delay_weight)
+                        self.grope_scheduler.update_acc_weight(adjusted_acc_weight)
                     else:
-                        self.grope_scheduler.update_delay_cons(new_cons_info_comb['delay_cons_info']['value'] * new_cons_info_comb['delay_cons_info']['adjust'])
-
+                        adjusted_delay_cons = new_cons_info_comb['delay_cons_info']['value'] * new_cons_info_comb['delay_cons_info']['adjust']
+                        self.grope_scheduler.update_delay_cons(adjusted_delay_cons)
         else:
             LOGGER.debug(f'{self.edge_device} Single-cycle recording stop is disabled.')
 
@@ -226,18 +211,16 @@ class GropeAgent(BaseAgent, abc.ABC):
             else:
                 cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
 
-    
-
             adjusted_delay_cons = 1
             adjusted_acc_cons = 0
-            delay_weight = 1
-            acc_weight = 0
+            adjusted_delay_weight = 1
+            adjusted_acc_weight = 0
 
             if self.goal_type == 'prefer':
                 adjusted_delay_cons = cur_cons_info_comb['delay_cons_info']['value'] * cur_cons_info_comb['delay_cons_info']['adjust']
                 adjusted_acc_cons = cur_cons_info_comb['acc_cons_info']['value'] * cur_cons_info_comb['acc_cons_info']['adjust']
-                delay_weight = cur_cons_info_comb['delay_weight']
-                acc_weight = cur_cons_info_comb['acc_weight']
+                adjusted_delay_weight = cur_cons_info_comb['delay_weight_info']['value'] * cur_cons_info_comb['delay_weight_info']['adjust']
+                adjusted_acc_weight = 1 - adjusted_delay_weight
             else:
                 adjusted_delay_cons = cur_cons_info_comb['delay_cons_info']['value'] * cur_cons_info_comb['delay_cons_info']['adjust']
 
@@ -267,8 +250,8 @@ class GropeAgent(BaseAgent, abc.ABC):
                 },
                 delay_cons=adjusted_delay_cons,
                 acc_cons=adjusted_acc_cons,
-                delay_weight=delay_weight,
-                acc_weight=acc_weight,
+                delay_weight=adjusted_delay_weight,
+                acc_weight=adjusted_acc_weight,
                 default_policy=self.init_param['default_policy'],
                 raw_meta_data=raw_meta_data,
                 grope_type_param = self.init_param['grope_type_param'],
