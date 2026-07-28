@@ -141,4 +141,4 @@ class CASVABSTOperation(BaseBSTOperation, abc.ABC):
 
         system.past_metadata = meta_data
         system.past_file_size = file_size
-        task.set_tmp_data(tmp_data)
+        new_task.set_tmp_data(tmp_data)
