@@ -210,6 +210,21 @@ EOF
 
 create_frontend() {
   echo "$(green_text [DAYU]) Creating frontend ..."
+  local svc_name="backend-cloud"
+  local max_wait=100
+  local waited=0
+
+  echo "$(green_text [DAYU]) Waiting for service $svc_name to be created by controller..."
+  # 循环等待service出现
+  while ! kubectl -n "$NAMESPACE" get service "$svc_name" >/dev/null 2>&1; do
+    sleep 1
+    waited=$((waited + 1))
+    if [[ $waited -ge $max_wait ]]; then
+      echo "$(red_text [ERROR]) Timeout waiting for service $NAMESPACE/$svc_name"
+      exit 1
+    fi
+  done
+  echo "$(green_text [DAYU]) Creating frontend ..."
   BACKEND_PORT=$(get_service_nodeport "backend-cloud" "$NAMESPACE")
       kubectl -n "$NAMESPACE" apply -f - <<EOF
 apiVersion: $API_VERSION

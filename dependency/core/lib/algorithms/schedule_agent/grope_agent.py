@@ -40,6 +40,7 @@ class GropeAgent(BaseAgent, abc.ABC):
 
         # 一次实验，多种场景
         self.goal_type = grope_param['goal_type']
+        self.grope_type = grope_param['grope_type']
         
         self.all_delay_cons_info = grope_param['all_delay_cons_info']
         self.all_acc_cons_info = grope_param['all_acc_cons_info']
@@ -118,7 +119,11 @@ class GropeAgent(BaseAgent, abc.ABC):
     def update_record(self, cur_task: Task):
 
         task = copy.deepcopy(cur_task)
-        cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
+        cur_cons_info_comb = {}
+        if self.cons_info_comb_idx >= len(self.all_cons_info_comb_list):
+            cur_cons_info_comb = self.all_cons_info_comb_list[-1]
+        else:
+            cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
         '''
         if self.goal_type == 'prefer':
             for delay_weight in self.all_delay_weight:
@@ -215,7 +220,13 @@ class GropeAgent(BaseAgent, abc.ABC):
 
             raw_meta_data = info['meta_data']
 
-            cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
+            cur_cons_info_comb = {}
+            if self.cons_info_comb_idx >= len(self.all_cons_info_comb_list):
+                cur_cons_info_comb = self.all_cons_info_comb_list[-1]
+            else:
+                cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
+
+    
 
             adjusted_delay_cons = 1
             adjusted_acc_cons = 0
