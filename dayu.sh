@@ -270,7 +270,7 @@ EOF
 
 wait_for_pods_running() {
     local namespace=$NAMESPACE
-    local timeout=120
+    local timeout=500
     local start_time=$(date +%s)
 
     echo "$(green_text [DAYU]) Waiting for all pods in namespace '$namespace' to be in the 'Running' state..."
