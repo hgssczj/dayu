@@ -1,6 +1,6 @@
 position: edge
 pod-template:
-  image: generator
+  image: repo:5000/dayuhub/generator:test-csy-01
   imagePullPolicy: Always
   env:
     - name: GEN_FILTER_NAME

@@ -43,7 +43,9 @@ class KnowledgeBase():
         self.raw_meta_data = copy.deepcopy(raw_meta_data)
 
         self.stop_threshold = stop_threshold
-
+        
+    def update_delay_cons(self, delay_cons):
+        self.delay_cons = delay_cons
 
     # 外部调度器通过这个接口来更新性能预估器本身
     def update_corrector(self, context_info, conf_info, task_info):

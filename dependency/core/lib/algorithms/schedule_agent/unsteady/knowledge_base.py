@@ -65,7 +65,21 @@ class KnowledgeBase():
         self._lock = threading.Lock()
         self._thread = threading.Thread(target=self.train_new_classifier, daemon=True)
         self._thread.start()
-        
+
+
+    # 自主更新约束
+    def update_delay_cons(self, delay_cons):
+        self.delay_cons = delay_cons
+
+    def update_acc_cons(self, acc_cons):
+        self.acc_cons = acc_cons
+    
+    def update_delay_weight(self, delay_weight):
+        self.delay_weight = delay_weight
+
+    def update_acc_weight(self, acc_weight):
+        self.acc_weight = acc_weight
+    
     # 更新一个用于制造新分类器的运行时情境
     def update_context_for_classifier_train(self, context_info):
         self.context_info_for_classifier_train = context_info

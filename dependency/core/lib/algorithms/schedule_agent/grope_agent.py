@@ -15,8 +15,6 @@ __all__ = ('GropeAgent',)
 @ClassFactory.register(ClassType.SCH_AGENT, alias='grope')
 class GropeAgent(BaseAgent, abc.ABC):
 
-
-
     def __init__(self, system, agent_id: int, sch_param: dict, grope_param: dict):
 
         super().__init__(system, agent_id)

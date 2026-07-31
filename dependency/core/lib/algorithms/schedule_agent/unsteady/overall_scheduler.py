@@ -443,9 +443,25 @@ class OverallScheduler:
         self.schedule_type = schedule_type
         self.feedback_weight = feedback_weight
 
-        if schedule_type == 'macro':
-        
+        if schedule_type == 'macro':   
             self._thread.start() # 启动后台线程运行异步循环
+
+    def update_delay_cons(self, delay_cons):
+        self.delay_cons = delay_cons
+        self.macro_search.knowledge_base.update_delay_cons(delay_cons)
+
+    def update_acc_cons(self, acc_cons):
+        self.acc_cons = acc_cons
+        self.macro_search.knowledge_base.update_acc_cons(acc_cons)
+    
+    def update_delay_weight(self, delay_weight):
+        self.delay_weight = delay_weight
+        self.macro_search.knowledge_base.update_delay_weight(delay_weight)
+
+    def update_acc_weight(self, acc_weight):
+        self.acc_weight = acc_weight
+        self.macro_search.knowledge_base.update_acc_weight(acc_weight)
+
 
     # _run_loop在初始化后成为线程循环。使用set_event_loop，将self._loop设置为循环事件
     # 使用try finally确保事件循环最终可以被关闭。在try中调用run_until_complete，用于启动异步计算循环

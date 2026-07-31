@@ -8,10 +8,12 @@ from core.lib.content import Task
 class ContextRecord:
     def __init__(self,
                  task: Task,
+                 cons_table: dict, 
                  resource_table: dict = None):
 
         self.__task = task
         self.__resource_table = resource_table if resource_table else {}
+        self.__cons_table = cons_table
 
     def set_task(self, task: Task):
         self.__task = task
@@ -19,17 +21,24 @@ class ContextRecord:
     def set_resource_table(self, resource_table: dict):
         self.__resource_table = resource_table
 
+    def set_cons_table(self, cons_table:dict):
+        self.__cons_table = cons_table
+
     def get_task(self):
         return self.__task
 
     def get_resource_table(self):
         return self.__resource_table
+    
+    def get_cons_table(self):
+        return self.__cons_table
 
     @staticmethod
     def serialize(context_record: 'ContextRecord'):
         return json.dumps({
             'task': Task.serialize(context_record.get_task()),
-            'resource_table': context_record.get_resource_table()
+            'resource_table': context_record.get_resource_table(),
+            'cons_table':context_record.get_cons_table()
         })
 
     @staticmethod
@@ -37,7 +46,8 @@ class ContextRecord:
         data = json.loads(data)
         task = Task.deserialize(data['task'])
         context_record = ContextRecord(task=task,
-                                       resource_table=data['resource_table'])
+                                       resource_table=data['resource_table'],
+                                       cons_table=data['cons_table'])
         return context_record
 
     @staticmethod
@@ -65,3 +75,4 @@ class ContextRecord:
                         LOGGER.warning(f"Could not decode context record JSON from line: {stripped_line}")
 
         return record_list
+

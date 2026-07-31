@@ -376,6 +376,10 @@ class OverallScheduler:
         if if_pure_fc != 1:
             self._thread.start() # 启动后台线程运行异步循环
 
+    def update_delay_cons(self, delay_cons):
+        self.delay_cons = delay_cons
+        self.macro_search.knowledge_base.update_delay_cons(delay_cons)
+
     # _run_loop在初始化后成为线程循环。使用set_event_loop，将self._loop设置为循环事件
     # 使用try finally确保事件循环最终可以被关闭。在try中调用run_until_complete，用于启动异步计算循环
     def _run_loop(self):

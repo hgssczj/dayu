@@ -48,12 +48,25 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
 
         self.schedule_plan_num = 0
 
-        
-
-        # 
         self.if_stop_record_in_single_cycle = sch_param['if_stop_record_in_single_cycle']
-        self.stop_max_frame_num = sch_param['stop_max_frame_num']
-        self.processed_frame_num = 0
+        
+        self.all_delay_cons_info = unsteady_param['all_delay_cons_info']
+        self.all_acc_cons_info = unsteady_param['all_acc_cons_info']
+        self.all_delay_weight_info = unsteady_param['all_delay_weight_info']
+        self.all_cons_info_comb_list = []
+        for delay_weight_info in self.all_delay_weight_info:
+            for delay_cons_info in self.all_delay_cons_info:
+                for acc_cons_info in self.all_acc_cons_info:
+                    cons_info_comb = {}
+                    cons_info_comb['delay_weight_info'] = delay_weight_info
+                    cons_info_comb['delay_cons_info'] = delay_cons_info
+                    cons_info_comb['acc_cons_info'] = acc_cons_info
+                    self.all_cons_info_comb_list.append(cons_info_comb)
+        # 标识当前约束要求的索引
+        self.cons_info_comb_idx = 0
+        # 对于每一个cons_info_comb，需要运行unit_logic_frame_num个逻辑帧
+        self.unit_logic_frame_num_max = unsteady_param['unit_logic_frame_num_max']
+        self.unit_processed_frame_num = 0
         self.if_keep_record = True
 
         from datetime import datetime
@@ -104,36 +117,67 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
         LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Finished updating scheduler awareness.')
 
     def update_record(self, cur_task: Task):
+
         task = copy.deepcopy(cur_task)
+        cur_cons_info_comb = {}
+        if self.cons_info_comb_idx >= len(self.all_cons_info_comb_list):
+            cur_cons_info_comb = self.all_cons_info_comb_list[-1]
+        else:
+            cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
+  
         if self.if_keep_record:
-            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Task recording is enabled.')
+            cons_table = {}
+            cons_table['delay_cons'] = cur_cons_info_comb['delay_cons_info']['value']
+            cons_table['acc_cons'] = cur_cons_info_comb['acc_cons_info']['value']
+            cons_table['delay_weight'] = cur_cons_info_comb['delay_weight_info']['value']
+            cons_table['acc_weight'] = 1 - cur_cons_info_comb['delay_weight_info']['value']
+            
             context_record = ContextRecord(
                 task=task,
-                resource_table=self.cur_resource_table
+                resource_table=self.cur_resource_table,
+                cons_table = cons_table
             )
-
             if self.record_path is None:
                 self.record_path = self.record_path_prefix + '-' + 'source_id' + '-' + str(task.get_source_id()) + '-' + task.get_source_device() + '-' + self.path_suffix
-
             ContextRecord.write_record(context_record=context_record,
                                        file_path=self.record_path)
-            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Wrote task record.')
+            LOGGER.debug(f'{self.edge_device} Wrote task record.')
         else:
-            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Task recording is disabled.')
+            LOGGER.debug(f'{self.edge_device} Task recording is disabled.')
 
+           # 基于逻辑帧数进行处理，包括约束更新等
         if self.if_stop_record_in_single_cycle == 1:
-            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Single-cycle recording stop is enabled.')
-            self.processed_frame_num += self.get_logic_frame_num_from_task(cur_task=task)
-            LOGGER.debug(
-                f'{self.edge_device} [UnteadyAgent] Processed logic frames: {self.processed_frame_num}; '
-                f'limit: {self.stop_max_frame_num}'
-            )
+            # 更新当前阶段已处理逻辑帧数
+            self.unit_processed_frame_num += self.get_logic_frame_num_from_task(cur_task=task)
+            LOGGER.debug(f'{self.edge_device} Current processed unit logic frames: {self.unit_processed_frame_num}; ')
+            # 如果当前约束下已处理逻辑帧数量达标，则进入下一阶段，并更新约束
+            if self.unit_processed_frame_num >= self.unit_logic_frame_num_max:
+                self.cons_info_comb_idx += 1
+                self.unit_processed_frame_num = 0
+                LOGGER.debug(f'{self.edge_device} New cons_comb_info_idx: {self.cons_info_comb_idx} of len{len(self.all_cons_info_comb_list)}; ')
+                # 已经处理完毕了所有的情况，后续不用继续记录，也不用更新约束
+                if self.cons_info_comb_idx >= len(self.all_cons_info_comb_list):
+                    LOGGER.debug(f'{self.edge_device} All cons_info_comb done.')
+                    self.if_keep_record = False
+                # 否则更新调度器内部的约束
+                else:
+                    # 更新所有约束
+                    new_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
+                    adjusted_delay_cons = new_cons_info_comb['delay_cons_info']['value'] * new_cons_info_comb['delay_cons_info']['adjust']
+                    adjusted_acc_cons = new_cons_info_comb['acc_cons_info']['value'] * new_cons_info_comb['acc_cons_info']['adjust']
+                    adjusted_delay_weight = new_cons_info_comb['delay_weight_info']['value'] * new_cons_info_comb['delay_weight_info']['adjust']
+                    adjusted_acc_weight = 1 - adjusted_delay_weight
 
-            if self.processed_frame_num > self.stop_max_frame_num:
-                LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Logic frame limit reached; stop recording.')
-                self.if_keep_record = False
+                    self.overall_scheduler.update_delay_cons(adjusted_delay_cons)
+                    self.overall_scheduler.update_acc_cons(adjusted_acc_cons)
+                    self.overall_scheduler.update_delay_weight(adjusted_delay_weight)
+                    self.overall_scheduler.update_acc_weight(adjusted_acc_weight)
+
         else:
-            LOGGER.debug(f'{self.edge_device} [UnsteadyAgent] Single-cycle recording stop is disabled.')
+            LOGGER.debug(f'{self.edge_device} Single-cycle recording stop is disabled.')
+
+
+
 
     def update_aware(self, cur_task: Task):
 
@@ -167,8 +211,18 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
         if self.overall_scheduler is None:
             raw_meta_data = info['meta_data']
 
-            adjusted_delay_cons = self.init_param['delay_cons'] * self.init_param['delay_cons_adjust']
-            adjusted_acc_cons = self.init_param['acc_cons'] * self.init_param['acc_cons_adjust']
+            raw_meta_data = info['meta_data']
+
+            cur_cons_info_comb = {}
+            if self.cons_info_comb_idx >= len(self.all_cons_info_comb_list):
+                cur_cons_info_comb = self.all_cons_info_comb_list[-1]
+            else:
+                cur_cons_info_comb = self.all_cons_info_comb_list[self.cons_info_comb_idx]
+
+            adjusted_delay_cons = cur_cons_info_comb['delay_cons_info']['value'] * cur_cons_info_comb['delay_cons_info']['adjust']
+            adjusted_acc_cons = cur_cons_info_comb['acc_cons_info']['value'] * cur_cons_info_comb['acc_cons_info']['adjust']
+            adjusted_delay_weight = cur_cons_info_comb['delay_weight_info']['value'] * cur_cons_info_comb['delay_weight_info']['adjust']
+            adjusted_acc_weight = 1 - adjusted_delay_weight
 
 
             self.overall_scheduler = OverallScheduler(
@@ -182,10 +236,10 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
                     'buffer_size': self.buffer_size_list,
                     'edge_serv_num': self.edge_serv_num_list
                 },
-                delay_cons=adjusted_delay_cons,
+                ddelay_cons=adjusted_delay_cons,
                 acc_cons=adjusted_acc_cons,
-                delay_weight=self.init_param['delay_weight'],
-                acc_weight=self.init_param['acc_weight'],
+                delay_weight=adjusted_delay_weight,
+                acc_weight=adjusted_acc_weight,
                 default_policy=self.init_param['default_policy'],
                 raw_meta_data=raw_meta_data,
                 context_names=self.init_param['context_names'],

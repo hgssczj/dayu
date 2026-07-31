@@ -24,24 +24,60 @@ pod-template:
         {
           'sch_param':{
               'record_path':'UnsteadyAgent-test',
-              'if_stop_record_in_single_cycle':1,
-              'stop_max_frame_num':500,
+              'if_stop_record_in_single_cycle':1
           },
-          'steady_param':{
+          'unsteady_param':{
               'kb_path':'test_kb/kb2',
-              'delay_cons':0.3,
-              'acc_cons':0.6,
-              'delay_weight':0.8,
-              'acc_weight':0.2,
-              'delay_cons_adjust':0.7,
-              'acc_cons_adjust':1.2,
+              'unit_logic_frame_num_max':100,
+              'all_delay_cons_info':[
+                                  {
+                                    'value':0.3,
+                                    'adjust':0.667
+                                  },
+                                  {
+                                    'value':0.4,
+                                    'adjust':0.5
+                                  }
+                                ],
+              'all_acc_cons_info':[
+                                  {
+                                    'value':0.6,
+                                    'adjust':1.16
+                                  },
+                                  {
+                                    'value':0.7,
+                                    'adjust':1
+                                  }
+                                ],
+              'all_delay_weight_info':[
+                                  {
+                                    'value':0.5,
+                                    'adjust':1.6
+                                  },
+                                  {
+                                    'value':0.6,
+                                    'adjust':1.333
+                                  },
+                                  {
+                                    'value':0.7,
+                                    'adjust':1.142
+                                  },
+                                  {
+                                    'value':0.8,
+                                    'adjust':1
+                                  },
+                                  {
+                                    'value':0.9,
+                                    'adjust':0.889
+                                  }
+                                ],
               'default_policy':{
                   'fps':30,
                   'resolution':'360p',
                   'buffer_size':4,
                   'edge_serv_num':0
               },
-              'acc_sample_interval':20,
+              'acc_sample_interval':100,
               'history_lenghth':3,
               'stop_threshold':0.1,
               'cluster_threshold':0.1,
