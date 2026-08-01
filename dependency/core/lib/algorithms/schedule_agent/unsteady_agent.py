@@ -250,7 +250,8 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
                 coeff_info=self.init_param['coeff_info'],
                 cluster_threshold=self.init_param['cluster_threshold'],
                 schedule_type=self.init_param['schedule_type'],
-                feedback_weight=self.init_param['feedback_weight']
+                feedback_weight=self.init_param['feedback_weight'],
+                if_online_train = self.init_param['if_online_train']
             )
 
         if self.schedule_plan_num % (self.acc_sample_interval) == 0:
@@ -268,11 +269,13 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
                 cur_policy = self.get_conf_info_from_task(cur_task=task)
                 context_info = self.get_context_info_from_task(cur_task=task)
                 real_time_delay = self.get_delay_from_task(cur_task=task)
-                real_time_acc = self.overall_scheduler.macro_search.knowledge_base.performance_predictor.acc_pre(
-                    context_info=context_info,
-                    conf_info=cur_policy,
-                    if_correct=True
-                )
+
+                if context_info is not None:
+                    real_time_acc = self.overall_scheduler.macro_search.knowledge_base.performance_predictor.acc_pre(
+                        context_info=context_info,
+                        conf_info=cur_policy,
+                        if_correct=True
+                    )
 
             # cur_task_id, cur_policy, context_info, real_time_delay, real_time_acc
             new_policy = self.overall_scheduler.get_schedule_plan(cur_task_id=task_id,

@@ -25,7 +25,8 @@ class KnowledgeBase():
                  acc_weight,
                  raw_meta_data, 
                  stop_threshold,
-                 cluster_threshold
+                 cluster_threshold,
+                 if_online_train,
                  ):
         
         self.cur_task_id = -1
@@ -62,9 +63,11 @@ class KnowledgeBase():
 
         self.trainer = MultiLabelTrainer()
 
-        self._lock = threading.Lock()
-        self._thread = threading.Thread(target=self.train_new_classifier, daemon=True)
-        self._thread.start()
+        if if_online_train == 1:
+
+            self._lock = threading.Lock()
+            self._thread = threading.Thread(target=self.train_new_classifier, daemon=True)
+            self._thread.start()
 
 
     # 自主更新约束
@@ -470,15 +473,15 @@ class KnowledgeBase():
     # 用于获取待修改配置旋钮即各自的预测概率
     def use_classifier(self, cur_policy, cur_context):
 
-        print('开始使用新分类器')
+        #print('开始使用新分类器')
 
         if self.cluster_threshold == 0 :
             print('---------阈值太小，不足以使用分类器------')
             return None
 
         cluster_name, extreme_context, if_belong_cluster = self.process_context_for_cluster(cur_context=cur_context)
-        print('准备使用新分类器:',cluster_name, extreme_context, if_belong_cluster)
-        print('当前可用分类器:',self.trainer.list_models())
+        #print('准备使用新分类器:',cluster_name, extreme_context, if_belong_cluster)
+        #print('当前可用分类器:',self.trainer.list_models())
     
         if cluster_name is not None:
             if if_belong_cluster == 1:
@@ -504,6 +507,8 @@ class KnowledgeBase():
     # 首先，必须确保重要的运行时情境都在其中，才可以进行计算
     # 返回值为None的时候说明聚类失败
     def process_context_for_cluster(self, cur_context):
+       if cur_context is None:
+            return None, None, None
        cluster_name, extreme_context, if_belong_cluster = self.context_cluster.process_context_for_cluster(cur_context=cur_context)
        return cluster_name, extreme_context, if_belong_cluster
 

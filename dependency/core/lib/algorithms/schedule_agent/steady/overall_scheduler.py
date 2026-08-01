@@ -27,6 +27,7 @@ class MacroSearch:
                  stop_threshold,
                  context_anylze_type,
                  cluster_threshold,
+                 if_online_train
                  ):
         
         # 初始化知识库
@@ -42,7 +43,8 @@ class MacroSearch:
                  acc_weight = acc_weight,
                  raw_meta_data = raw_meta_data, 
                  stop_threshold = stop_threshold,
-                 cluster_threshold = cluster_threshold
+                 cluster_threshold = cluster_threshold,
+                 if_online_train = if_online_train
                  )
         
         # 初始化配置取值范围
@@ -386,7 +388,8 @@ class OverallScheduler:
                  coeff_info,
                  steady_record_path,
                  correct_record_path,
-                 cluster_threshold
+                 cluster_threshold,
+                 if_online_train
                  ):
         
         # 必要参数
@@ -437,7 +440,8 @@ class OverallScheduler:
                                         history_lenghth = history_lenghth,
                                         stop_threshold = stop_threshold,
                                         context_anylze_type = context_anylze_type,
-                                        cluster_threshold = cluster_threshold)
+                                        cluster_threshold = cluster_threshold,
+                                        if_online_train = if_online_train)
 
         self.micro_feedback = MicroFeedback(coeff_info = coeff_info,
                                             knob_value_range_dict = knob_value_range_dict)
@@ -645,7 +649,7 @@ class OverallScheduler:
         # 不是冷启动，cur_policy不为None，且宏观调度给出了结果，那就使用宏观调度阶段算出的结果来进行负反馈调度
         else: 
 
-            #print('准备负反馈')
+            print('准备负反馈')
             
             # 判断上一次是否满足时延约束，这一次是否满足时延约束
             # 用if_meet_cons_before保存上一次的结果，并在判断结束后更新为这一次的结果

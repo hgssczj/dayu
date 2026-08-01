@@ -9,6 +9,8 @@ class ContextCluster():
         self.cluster_threshold = cluster_threshold
 
     def process_context_for_cluster(self, cur_context):
+        if cur_context is None:
+            return None, None, None
 
         if_belong_cluster = 1
         extreme_context = {}

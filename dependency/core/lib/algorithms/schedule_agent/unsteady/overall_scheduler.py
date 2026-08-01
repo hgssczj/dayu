@@ -28,6 +28,7 @@ class MacroSearch:
                  stop_threshold,
                  context_anylze_type,
                  cluster_threshold,
+                 if_online_train
                  ):
         
         # 初始化知识库
@@ -43,7 +44,8 @@ class MacroSearch:
                  acc_weight = acc_weight,
                  raw_meta_data = raw_meta_data, 
                  stop_threshold = stop_threshold,
-                 cluster_threshold = cluster_threshold
+                 cluster_threshold = cluster_threshold,
+                 if_online_train = if_online_train
                  )
         
         # 初始化配置取值范围
@@ -380,7 +382,8 @@ class OverallScheduler:
                  coeff_info,
                  cluster_threshold,
                  schedule_type,
-                 feedback_weight
+                 feedback_weight,
+                 if_online_train
                  ):
         
         
@@ -427,7 +430,8 @@ class OverallScheduler:
                                         history_lenghth = history_lenghth,
                                         stop_threshold = stop_threshold,
                                         context_anylze_type = context_anylze_type,
-                                        cluster_threshold = cluster_threshold)
+                                        cluster_threshold = cluster_threshold,
+                                        if_online_train = if_online_train)
 
         self.micro_feedback = MicroFeedback(coeff_info = coeff_info,
                                             knob_value_range_dict = knob_value_range_dict)

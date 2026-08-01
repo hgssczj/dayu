@@ -30,7 +30,7 @@ pod-template:
               'kb_path':'test_kb/kb2',
               'steady_record_path':'OverallScheduler-test',
               'correct_record_path':'Preditor-test',
-              'unit_logic_frame_num_max':100,
+              'unit_logic_frame_num_max':400,
               'all_delay_cons_info':[
                                   {
                                     'value':0.3,
@@ -82,8 +82,9 @@ pod-template:
               'acc_sample_interval':100,
               'history_lenghth':3,
               'stop_threshold':0.1,
+              'if_online_train':0,
               'cluster_threshold':0.1,
-              'macro_update_interval':0.01,
+              'macro_update_interval':0.5,
               'context_anylze_type':1,
               'coeff_info':{
                               'step_coeff':{

@@ -48,7 +48,7 @@ pod-template:
               },
               'history_lenghth':3,
               'stop_threshold':0.1,
-              'macro_update_interval':0.01,
+              'macro_update_interval':0.5,
               'context_anylze_type':1,
               'coeff_info':{
                               'step_coeff':{
