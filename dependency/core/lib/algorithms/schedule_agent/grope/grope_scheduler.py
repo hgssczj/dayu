@@ -73,7 +73,7 @@ class GropeScheduler:
     def get_schedule_plan(self, cur_task_id, cur_policy, context_info, grope_type ):
 
         # 冷启动
-        if cur_policy is None or context_info:
+        if cur_policy is None or context_info is None:
 
             print(cur_policy, context_info)
             print('冷启动')
