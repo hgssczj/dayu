@@ -27,7 +27,7 @@ pod-template:
               'if_stop_record_in_single_cycle':1
           },
           'grope_param':{
-              'grope_type':'AdaMEC',
+              'grope_type':'Gecko',
               'goal_type':'prefer',
               'kb_path':'test_kb/kb2',
               'unit_logic_frame_num_max':400,

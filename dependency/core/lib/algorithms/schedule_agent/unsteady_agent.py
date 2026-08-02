@@ -236,7 +236,7 @@ class UnsteadyAgent(BaseAgent, abc.ABC):
                     'buffer_size': self.buffer_size_list,
                     'edge_serv_num': self.edge_serv_num_list
                 },
-                ddelay_cons=adjusted_delay_cons,
+                delay_cons=adjusted_delay_cons,
                 acc_cons=adjusted_acc_cons,
                 delay_weight=adjusted_delay_weight,
                 acc_weight=adjusted_acc_weight,

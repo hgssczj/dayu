@@ -27,16 +27,17 @@ pod-template:
               'if_stop_record_in_single_cycle':1
           },
           'unsteady_param':{
+              'schedule_type':'macro',
               'kb_path':'test_kb/kb2',
-              'unit_logic_frame_num_max':100,
+              'unit_logic_frame_num_max':400,
               'all_delay_cons_info':[
                                   {
                                     'value':0.3,
-                                    'adjust':0.667
+                                    'adjust':0.333
                                   },
                                   {
                                     'value':0.4,
-                                    'adjust':0.5
+                                    'adjust':0.25
                                   }
                                 ],
               'all_acc_cons_info':[
@@ -52,23 +53,23 @@ pod-template:
               'all_delay_weight_info':[
                                   {
                                     'value':0.5,
-                                    'adjust':1.6
+                                    'adjust':1.8
                                   },
                                   {
                                     'value':0.6,
-                                    'adjust':1.333
+                                    'adjust':1.5
                                   },
                                   {
                                     'value':0.7,
-                                    'adjust':1.142
+                                    'adjust':1.286
                                   },
                                   {
                                     'value':0.8,
-                                    'adjust':1
+                                    'adjust':1.125
                                   },
                                   {
                                     'value':0.9,
-                                    'adjust':0.889
+                                    'adjust':1
                                   }
                                 ],
               'default_policy':{
@@ -93,7 +94,6 @@ pod-template:
                                   'cur_value':10
                               },
                           },
-              'schedule_type':'macro',
               'feedback_weight':{
                       'delay_decrease_weight':{
                           'fps': -1,
@@ -135,7 +135,6 @@ pod-template:
                           'y_sample_window_length':10
                       }
                   },
-
               'queue_param':{
                   'detect_edge':{
                       'max_diff_thr':50,
@@ -169,7 +168,7 @@ pod-template:
                       'fit_thr':0.9,
                       'history_window_length':100
                   }
-              },
+              }
           }
         }
 port-open:

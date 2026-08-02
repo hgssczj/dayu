@@ -265,23 +265,24 @@ class GropeScheduler:
         new_fps_idx = cur_fps_idx #初始化
         if 0<cur_obj_speed and cur_obj_speed <= speed_threshold: #速度小，说明变化慢，此时可以降低帧率
             new_fps_idx = int(max( 0, cur_fps_idx / 2.0 ))
-            print('fps减半', cur_fps_idx, '便成为',new_fps_idx)
+            # print('fps减半', cur_fps_idx, '便成为',new_fps_idx)
         else:
             new_fps_idx = int(min( len(self.knob_value_range_dict['fps'])-1, cur_fps_idx + 1))
-            print('fps增加', cur_fps_idx, '便成为',new_fps_idx)
+            # print('fps增加', cur_fps_idx, '便成为',new_fps_idx)
         
         # 如果obj_num为0，那么就可以降低分辨率了；否则增加分辨率。
+        '''
         new_resolution_idx = cur_resolution_idx
         if cur_obj_num == 0:
             new_resolution_idx = int(max( 0, cur_resolution_idx / 2.0 ))
         else:
             new_resolution_idx = int(min( len(self.knob_value_range_dict['resolution'])-1, cur_resolution_idx + 1))
-        
+        '''
         
         # 得到新的fps
         new_fps = self.knob_value_range_dict['fps'][new_fps_idx]
-        print('fps变化:',cur_fps,'到',new_fps)
-        new_resolution = self.knob_value_range_dict['resolution'][new_resolution_idx]
+        # print('fps变化:',cur_fps,'到',new_fps)
+        # new_resolution = self.knob_value_range_dict['resolution'][new_resolution_idx]
 
         #以上确保了fps可以足够低。接下来在其他配置维度上继续进行梯度下降
 
@@ -291,7 +292,7 @@ class GropeScheduler:
         # (2) 放入一个初始的元素,并设置其fps为new_fps
         dict_obj = copy.deepcopy(cur_policy)
         dict_obj['fps'] = new_fps
-        dict_obj['resolution'] = new_resolution
+        # dict_obj['resolution'] = new_resolution
         score = self.get_score_of_policy(policy = dict_obj,
                                          context_info = context_info,
                                          grope_type = 'Gecko')
@@ -305,7 +306,7 @@ class GropeScheduler:
         # (4)进入循环，但是求邻居的时候不考虑fps的存在，因此解空间小了一个维度
         knob_list = [knob for knob in self.knob_value_range_dict.keys()]
         knob_list.remove('fps')
-        knob_list.remove('resolution')
+        # knob_list.remove('resolution')
         while True:
             
             # (5)从优先队列中删除并提取一个点，然后将所有的邻居都放入优先队列
