@@ -27,11 +27,15 @@ pod-template:
               'if_stop_record_in_single_cycle':1
           },
           'grope_param':{
-              'grope_type':'Gecko',
-              'goal_type':'prefer',
+              'grope_type':'MadEye',
+              'goal_type':'rigid',
               'kb_path':'test_kb/kb2',
               'unit_logic_frame_num_max':400,
               'all_delay_cons_info':[
+                                  {
+                                    'value':0.5,
+                                    'adjust':0.1
+                                  },
                                   {
                                     'value':0.3,
                                     'adjust':0.1667
@@ -74,7 +78,7 @@ pod-template:
                                   }
                                 ],
               'default_policy':{
-                  'fps':30,
+                  'fps':1,
                   'resolution':'360p',
                   'buffer_size':4,
                   'edge_serv_num':0

@@ -27,13 +27,17 @@ pod-template:
               'if_stop_record_in_single_cycle':1
           },
           'rigid_param':{
-              'if_pure_fc':1,
               'kb_path':'test_kb/kb2',
-              'unit_logic_frame_num_max':100,
+              'if_pure_fc':1,
+              'unit_logic_frame_num_max':400,
               'all_delay_cons_info':[
                                   {
+                                    'value':0.5,
+                                    'adjust':0.5
+                                  },
+                                  {
                                     'value':0.3,
-                                    'adjust':0.667
+                                    'adjust':0.5
                                   },
                                   {
                                     'value':0.4,
@@ -66,7 +70,6 @@ pod-template:
                                   'cur_value':0.1
                               }
                           },
-
               'corrector_param' : {
                       'corrector_pool_threshold':0.01,
                       'detect':{
@@ -88,7 +91,6 @@ pod-template:
                           'y_sample_window_length':10
                       }
                   },
-
               'queue_param':{
                   'detect_edge':{
                       'max_diff_thr':50,
