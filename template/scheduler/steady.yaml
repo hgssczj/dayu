@@ -1,7 +1,7 @@
 position: cloud
 pod-template:
   image: repo:5000/dayuhub/scheduler:test-csy-01
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
     - name: SCH_CONFIG_EXTRACTION_NAME
       value: simple

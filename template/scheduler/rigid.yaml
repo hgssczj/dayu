@@ -1,7 +1,7 @@
 position: cloud
 pod-template:
   image: repo:5000/dayuhub/scheduler:test-csy-01
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
     - name: SCH_CONFIG_EXTRACTION_NAME
       value: simple
@@ -30,23 +30,15 @@ pod-template:
               'kb_path':'test_kb/kb2',
               'if_pure_fc':1,
               'if_simple_record':1,
-              'unit_logic_frame_num_max':400,
+              'unit_logic_frame_num_max':1000,
               'all_delay_cons_info':[
                                   {
-                                    'value':0.5,
-                                    'adjust':0.5
-                                  },
-                                  {
-                                    'value':0.3,
-                                    'adjust':0.5
-                                  },
-                                  {
-                                    'value':0.4,
-                                    'adjust':0.5
+                                    'value':0.15,
+                                    'adjust':1
                                   }
                                 ],
               'default_policy':{
-                  'fps':30,
+                  'fps':1,
                   'resolution':'360p',
                   'buffer_size':4,
                   'edge_serv_num':0

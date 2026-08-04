@@ -1,7 +1,7 @@
 position: edge
 pod-template:
   image: repo:5000/dayuhub/generator:test-csy-01
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
     - name: GEN_FILTER_NAME
       value: simple

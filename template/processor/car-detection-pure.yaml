@@ -1,7 +1,7 @@
 position: both
 pod-template:
   image: repo:5000/dayuhub/car-detection:test-csy-01
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
     - name: PROCESSOR_NAME
       value: "detector_processor"

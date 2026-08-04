@@ -152,7 +152,7 @@ class GropeAgent(BaseAgent, abc.ABC):
                 ContextRecord.write_record(context_record=context_record,
                                            file_path=self.record_path)
                 
-      LOGGER.debug(f'{self.edge_device} Wrote task record.')
+            LOGGER.debug(f'{self.edge_device} Wrote task record.')
         else:
             LOGGER.debug(f'{self.edge_device} Task recording is disabled.')
         

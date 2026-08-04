@@ -1,7 +1,7 @@
 position: edge
 pod-template:
   image: generator
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
     - name: GEN_FILTER_NAME
       value: dynamic

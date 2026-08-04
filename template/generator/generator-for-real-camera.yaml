@@ -1,7 +1,7 @@
 position: edge
 pod-template:
   image: generator
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   securityContext:
     privileged: true
     allowPrivilegeEscalation: true

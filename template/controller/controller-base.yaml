@@ -1,7 +1,7 @@
 position: both
 pod-template:
   image: controller
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
     # whether display raw data on frontend (transmit files to cloud)
     - name: DISPLAY

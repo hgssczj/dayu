@@ -1,7 +1,7 @@
 position: cloud
 pod-template:
   image: distributor
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   env:
 port-open:
   pos: cloud

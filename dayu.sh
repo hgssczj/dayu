@@ -70,7 +70,7 @@ spec:
       spec:
         containers:
           - image: $REGISTRY/redis:latest
-            imagePullPolicy: Always
+            imagePullPolicy: IfNotPresent
             name: redis
             ports:
               - containerPort: 6379
@@ -133,7 +133,7 @@ spec:
                 - name: KUBE_CACHE_TTL
                   value: "$KUBE_CACHE_TTL"
               image: $REGISTRY/$REPOSITORY/datasource:$TAG
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               name: datasource
               ports:
                 - containerPort: 8000
@@ -193,7 +193,7 @@ spec:
             - name: SYSTEM_LOG_COMPACT_INTERVAL
               value: "$SYSTEM_LOG_COMPACT_INTERVAL"
             image: $REGISTRY/$REPOSITORY/backend:$TAG
-            imagePullPolicy: Always
+            imagePullPolicy: IfNotPresent
             name: backend
             ports:
               - containerPort: 8000
@@ -253,7 +253,7 @@ spec:
             - name: VITE_PUBLIC_PATH
               value: /vue-next-admin-preview/
             image: $REGISTRY/$REPOSITORY/frontend:$TAG
-            imagePullPolicy: Always
+            imagePullPolicy: IfNotPresent
             name: frontend
             ports:
               - containerPort: 8000
