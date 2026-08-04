@@ -29,6 +29,7 @@ pod-template:
           'rigid_param':{
               'kb_path':'test_kb/kb2',
               'if_pure_fc':1,
+              'if_simple_record':1,
               'unit_logic_frame_num_max':400,
               'all_delay_cons_info':[
                                   {

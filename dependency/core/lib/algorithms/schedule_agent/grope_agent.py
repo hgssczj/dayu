@@ -3,7 +3,7 @@ import abc
 from core.lib.common import ClassFactory, ClassType, Context, TaskConstant, LOGGER
 from core.lib.content import Task
 
-from .grope import ContextRecord, GropeScheduler
+from .grope import ContextRecord, GropeScheduler, SimpleRecord
 
 import copy
 
@@ -65,6 +65,7 @@ class GropeAgent(BaseAgent, abc.ABC):
         # 对于每一个cons_info_comb，需要运行unit_logic_frame_num个逻辑帧
         self.unit_logic_frame_num_max = grope_param['unit_logic_frame_num_max']
         self.unit_processed_frame_num = 0
+        self.if_simple_record = grope_param['if_simple_record']
         self.if_keep_record = True
 
         from datetime import datetime
@@ -131,16 +132,27 @@ class GropeAgent(BaseAgent, abc.ABC):
                 cons_table['acc_weight'] = 1 - cur_cons_info_comb['delay_weight_info']['value']
             else:
                 cons_table['delay_cons'] = cur_cons_info_comb['delay_cons_info']['value']
-            context_record = ContextRecord(
-                task=task,
-                resource_table=self.cur_resource_table,
-                cons_table = cons_table
-            )
+
             if self.record_path is None:
                 self.record_path = self.record_path_prefix + '-' + 'source_id' + '-' + str(task.get_source_id()) + '-' + task.get_source_device() + '-' + self.path_suffix
-            ContextRecord.write_record(context_record=context_record,
-                                       file_path=self.record_path)
-            LOGGER.debug(f'{self.edge_device} Wrote task record.')
+       
+            if self.if_simple_record == 1:
+                simple_record = SimpleRecord(
+                    task=task,
+                    resource_table = self.cur_resource_table
+                )
+                SimpleRecord.write_record(simple_record=simple_record,
+                                          file_path=self.record_path)
+            else:
+                context_record = ContextRecord(
+                    task=task,
+                    resource_table=self.cur_resource_table,
+                    cons_table = cons_table
+                )
+                ContextRecord.write_record(context_record=context_record,
+                                           file_path=self.record_path)
+                
+      LOGGER.debug(f'{self.edge_device} Wrote task record.')
         else:
             LOGGER.debug(f'{self.edge_device} Task recording is disabled.')
         

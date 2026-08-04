@@ -30,6 +30,7 @@ pod-template:
               'grope_type':'MadEye',
               'goal_type':'rigid',
               'kb_path':'test_kb/kb2',
+              'if_simple_record':1,
               'unit_logic_frame_num_max':400,
               'all_delay_cons_info':[
                                   {
